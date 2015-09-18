@@ -37,15 +37,15 @@ o3=conv2(f3, image,'full');
 o4=conv2(f4, image,'full');
 
 
-subplot(2,5,2),colormap gray, imagesc(imcomplement(f1)), title('0 filter');
-subplot(2,5,3),colormap gray, imagesc(imcomplement(f2));title('90 filter');
-subplot(2,5,4),colormap gray, imagesc(imcomplement(f3));title('45 filter');
-subplot(2,5,5),colormap gray, imagesc(imcomplement(f4));title('-45 filter');
-subplot(2,5,6),colormap gray, imagesc(imcomplement(image));title('input');
-subplot(2,5,7),colormap gray, imagesc(imcomplement(o1));title('0 response');
-subplot(2,5,8),colormap gray, imagesc(imcomplement(o2));title('90 filter');
-subplot(2,5,9),colormap gray, imagesc(imcomplement(o3));title('45 filter');
-subplot(2,5,10),colormap gray, imagesc(imcomplement(o4));title('-45 filter');
+subplot(2,5,2),colormap gray, imagesc(f1), title('0 filter');
+subplot(2,5,3),colormap gray, imagesc(f2);title('90 filter');
+subplot(2,5,4),colormap gray, imagesc(f3);title('45 filter');
+subplot(2,5,5),colormap gray, imagesc(f4);title('-45 filter');
+subplot(2,5,6),colormap gray, imagesc(image);title('input');
+subplot(2,5,7),colormap gray, imagesc(o1);title('0 response');
+subplot(2,5,8),colormap gray, imagesc(o2);title('90 filter');
+subplot(2,5,9),colormap gray, imagesc(o3);title('45 filter');
+subplot(2,5,10),colormap gray, imagesc(o4);title('-45 filter');
 
 
 end
