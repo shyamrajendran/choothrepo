@@ -1,0 +1,15 @@
+Extra credit: Describe how you could obtain the spectrogram of a vector using only a matrixproduct. How will that matrix look like? What are the equations that describe the whole operation?
+
+Assuming the vector size is N and Window size is W, I think we can use a matrix derived using the kronecker product. 
+Taking an identity matrix of size N/W, 
+
+D = diag([1,1,1,.....N/W times]);
+
+We can take kron on the dft matrix and D like 
+
+K = kron(DFTMatrix, D);
+
+Finally to get spectrogram of the vector we can dot product of K and Vector ( assuming given vector V is a column vector ) like
+spectogram = K.V;
+
+I have not experimented with actual data though.
