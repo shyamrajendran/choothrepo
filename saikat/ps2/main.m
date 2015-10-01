@@ -1,0 +1,502 @@
+%%
+%%%%%%%%%%%%% lecture 5 slide 25
+clearvars
+x = randn(300,1);
+y1 = normrnd(x,1);
+y2 = normrnd(x,1);
+figure
+scatter(y1,y2);
+title('input data')
+
+X = [y1.'; y2.'];
+cov_X = cov(X.');
+[U, S, V] = svd(cov_X);
+
+new_X = U * X;
+figure
+scatter(new_X(1,:), new_X(2,:))
+title('pca op')
+
+figure
+scatter(y1,y2);
+hold on
+plot(U(:,1))
+hold on
+plot(U(:,2))
+title('eigen vectors')
+%%
+%%%%%%%%%%%%% Lecture 5 Slide 37 %%%%%%%%%%%%%%%%
+clearvars
+load('faces.mat');
+figure
+colormap gray
+for i = 1:36
+    subplot(6,6,i);
+    imagesc(reshape(X(:,i),M,N))
+end
+
+total_face = sum(X, 2);
+mean_face = total_face ./ N;
+figure
+colormap bone
+imagesc(reshape(mean_face, M,N))
+title('mean face')
+
+for i = 1:N
+    X(:,i) = X(:,i) - mean_face;
+end
+
+cov_X = cov(X.');
+[U,S,V] = svd(cov_X);
+figure
+colormap bone
+for i = 1:36
+    subplot(6,6,i);
+    imagesc(reshape(U(:,i),M,N))
+end
+title('eigen faces')
+%%
+%%%%%%%%%%%%%%% lecture 5 slide 39
+reduced_dim = [50 10];
+
+for i = 1:length(reduced_dim)
+    cur_dim = reduced_dim(i);
+    W = U.';
+    W = W(1:cur_dim,:);
+    Z = W * X;
+    approx_x = W.' * Z;
+    figure
+    colormap bone
+    imagesc(reshape(approx_x(:,11) + mean_face,M,N))
+%     title('dimension', reduced_dim(i))
+end
+%%
+%%%%%%%%%%%% lecture 5 slide 51-52
+clearvars
+load('faces.mat');
+[row, col] = size(X);
+patch_size = 10;
+patches_input = zeros(patch_size * patch_size, col);
+for i = 1:col
+    cur_image = X(:,i);
+    cur_image = reshape(cur_image, M, N);
+    r = randi([1 (M-patch_size)]);
+    start_row = r;
+    end_row = r + patch_size - 1;
+    c = randi([1 (N-patch_size)]);
+    start_col = c;
+    end_col = c + patch_size - 1;
+    image = cur_image(start_row : end_row, start_col : end_col);
+    patches_input(:,i) = image(:);
+end
+
+figure
+colormap gray
+imagesc(patches_input)
+
+mean_patch = sum(patches_input,2) ./ col;
+for i = 1 : col
+    patches_input(:,i) = patches_input(:,i) - mean_patch;
+end
+
+cov_X = cov(patches_input.');
+[U,S,V] = svd(cov_X);
+
+figure
+colormap bone
+for i = 1:50
+    subplot(5,10,i);
+    imagesc(reshape(U(:,i), patch_size, patch_size))
+end
+%%
+%%%%%%%%%% lecture 6 slide 22%%%%%%%%%%%%%%%%%%%%%%
+clearvars
+low = -1;
+high = 1;
+num_points = 1000;
+r1 = (high-low).*rand(num_points,1) + low;
+r2 = (high-low).*rand(num_points,1) + low;
+x = 2 * r1 + r2;
+y = r1 + r2;
+
+figure
+scatter(x,y);
+title('Input')
+
+X = [x.';y.'];
+cov_X = cov(X.');
+[U, S, V] = svd(cov_X);
+
+new_X = U * X;
+figure
+scatter(new_X(1,:), new_X(2,:))
+title('PCA op')
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+W = eye(2);
+I = eye(2);
+
+alpha = 0.05;
+count = 0;
+max_iter = 500;
+error = 100;
+while (count < max_iter) && (error > 0.0001)
+    W_last = W;
+    Y = W * X;
+    Y_3 = Y.^3;
+    delta = minus(I*num_points, Y_3 * Y') * W/num_points;
+    delta = delta .* alpha;
+    W = W + delta;
+    error = myrms(W_last, W);
+    count = count + 1;
+end
+count
+Y_ICA_new = W * X;
+figure
+scatter(Y_ICA_new (1,:), Y_ICA_new (2,:))
+title('ICA op')
+%%
+%%%%%%%%%% lecture 6 slide 32%%%%%%%%%%%%%%%%%%%%%%
+clearvars
+load('faces.mat');
+samples = 600
+total_face = sum(X, 2);
+mean_face = total_face ./ samples;
+for i = 1:N
+    X(:,i) = X(:,i) - mean_face;
+end
+%%%%%%%%%%%%%%%%%%%%PCA%%%%%%%%%%%%%%%
+cov_X = cov(X.');
+[U,S,V] = svd(cov_X);
+cur_dim = 16;
+W_PCA = U.';
+W_PCA = W_PCA(1:cur_dim,:);
+Z_PCA = W_PCA * X;
+PCA_op = W_PCA.' * Z_PCA;
+figure
+colormap bone
+for i = 1:16
+    subplot(4,4,i);
+    imagesc(reshape(W_PCA(i,:),M,N))
+end
+%%%%%%%%%%%%%%%%%%%%ICA %%%%%%%%%%%%%%
+W_ICA = rand(16,16);
+I = eye(16);
+alpha = 1e-16;
+count = 0;
+max_iter = 500;
+error = 100;
+X = Z_PCA;
+target_error = 1e-5;
+while (count < 5000) && (error > target_error)
+    W_last = W_ICA;
+    Y = W_ICA * X;
+    Y_3 = Y.^3;
+    delta = minus(I*samples, Y_3 * Y') * W_ICA / samples;
+    delta = delta * alpha;
+    W_ICA = W_ICA + delta;
+    error = myrms(W_last, W_ICA);
+    count = count + 1;
+end
+count
+new_W = W_ICA * W_PCA;
+
+figure
+colormap bone
+for i = 1:16
+    subplot(4,4,i);
+    imagesc(reshape(new_W(i,:),M,N))
+end
+%%
+%%%%%%%%%% lecture 6 slide 45%%%%%%%%%%%%%%%%%%%%%%
+clearvars
+input = [zeros(10,200);
+         zeros(10,22) ones(10, 18) zeros(10,40) ones(10,40) zeros(10,30) ones(10,30) zeros(10,20);
+         zeros(55,200);
+         ones(15,25) zeros(15,25) ones(15, 40) zeros(15,40) ones(15, 30) zeros(15, 25) ones(15,15);
+         zeros(10,200)];
+figure
+colormap gray
+imagesc(imcomplement(input))
+title('input data')
+%%%%%%%%%%%%%%input, dim, max_iter, factor, error
+[w, h] = mynmf(input, 2, 100, 3e-05);
+figure
+subplot(2,1,1)
+plot(w(:,1))
+subplot(2,1,2)
+plot(w(:,2))
+
+figure
+title('test')
+subplot(2,1,1)
+plot(h(1,:))
+subplot(2,1,2)
+plot(h(2,:))
+%%
+%%%%%%%%%% lecture 6 slide 51,52,54%%%%%%%%%%%%%%%%%%%%%%
+clearvars
+input_video = VideoReader('hands.mp4');
+i = 1;
+while hasFrame(input_video)
+    f = readFrame(input_video);
+    f_gray = rgb2gray(f);
+    input(:, i) = f_gray(:);
+    i = i + 1;
+end
+input_double = double(input);
+[V, D] = eigs(cov(input_double.'));
+V1 = V(:,1:3);
+W_PCA = V1.';
+Z_PCA = W_PCA * input_double;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure
+colormap bone
+imagesc(reshape(W_PCA(1,:), 60,80) .* 300)
+figure
+colormap bone
+imagesc(reshape(W_PCA(2,:), 60,80) .* 300)
+figure
+colormap bone
+imagesc(reshape(W_PCA(3,:), 60,80) .* 300)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure
+plot(Z_PCA(1,:))
+hold on
+plot(Z_PCA(2,:))
+hold on
+plot(Z_PCA(3,:))
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ICA
+W_ICA = rand(3,3);
+I = eye(3);
+alpha = 1e-16;
+count = 0;
+max_iter = 500;
+error = 100;
+
+X = Z_PCA;
+samples = 123;
+target_error = 1e-6;
+while (count < 10000) && (error > target_error)
+    W_last = W_ICA;
+    Y = W_ICA * X;
+    Y_3 = Y.^3;
+    delta = minus(I*samples, Y_3 * Y') * W_ICA / samples;
+    delta = delta * alpha;
+    W_ICA = W_ICA + delta;
+    error = myrms(W_last, W_ICA);
+    count = count + 1;
+end
+count
+new_W = W_ICA * W_PCA;
+Z_NEW = new_W * input_double;
+figure
+plot(Z_NEW(1,:))
+hold on
+plot(Z_NEW(2,:))
+hold on
+plot(Z_NEW(3,:))
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%input, dim, max_iter, error
+[w,h] = mynmf(input_double, 3, 100,1e-05);
+figure,
+subplot(3,1,1)
+plot(h(1,:))
+subplot(3,1,2)
+plot(h(2,:))
+subplot(3,1,3)
+plot(h(3,:))
+title('nmf')
+
+figure
+colormap gray
+factor = 1;
+imagesc(reshape(w(:,1), 60,80) .* factor)
+figure
+colormap gray
+factor = 1;
+imagesc(reshape(w(:,2), 60,80) .* factor)
+figure
+colormap gray
+factor = 1;
+imagesc(reshape(w(:,3), 60,80) .* factor)
+%%
+%%%%%%%%%% lecture 7 slide 36%%%%%%%%%%%%%%%%%%%%%%
+clearvars
+load('cities.mat');
+input = D;
+[row, col] = size(input);
+figure
+colormap bone
+imagesc(input)
+row_mean = sum(input, 2) ./ col;
+input_row_mean = zeros(row, col);
+for i = 1 : col
+    input_row_mean(:,i) = input(:,i) - row_mean;
+end
+
+col_mean = sum(input_row_mean) ./ row;
+op = zeros(row, col);
+for i = 1 : row
+    op(i,:) = input_row_mean(i,:) - col_mean;
+end
+
+cov_op = cov(op);
+[U, S, V] = svd(cov_op);
+Z1 = U(:,1:3).' * op;
+figure
+scatter3(Z1(1,:),Z1(2,:), Z1(3,:))
+
+Z2 = U(:,1:2).' * op;
+figure
+title('2d plot')
+scatter(Z2(1,:),Z2(2,:))
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% lecture 7 slide 56
+clearvars
+N = 2^10;
+% data = generate_swiss_roll(N);
+%%%%%%%%%%%% generate swiss roll data
+t = sort(4*pi*sqrt(rand(N,1))); 
+z = 8 * pi * rand(N,1);
+x = (t+ 0.1).*cos(t);
+y = (t+ 0.1).*sin(t);
+data = [x,y,z];
+figure
+cmap = jet(N);
+scatter3(x,y,z,20,cmap);
+title('Input data');
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+neighbours = 25;
+cmap = jet(N);
+x = data(:,1);
+y = data(:,2);
+z = data(:,3);
+W = zeros(N, N);
+sigma = 100;
+for i = 1 : N
+    for j = 1: N
+        x_d = (x(i) - x(j)) .^ 2;
+        y_d = (y(i) - y(j)) .^ 2;
+        z_d = (z(i) - z(j)) .^ 2;
+        d = x_d + y_d + z_d;
+        W(i,j) = exp(-1 * d / sigma);
+    end
+end
+
+new_W = zeros(N,N);
+for i = 1:N
+    [sort_data, sort_index] = sort(W(i,:));
+    for j = N-1 : -1: N - neighbours + 1
+        max_index = sort_index(j);
+        new_W(i,max_index) = sort_data(j);
+    end
+end
+
+sum_rows_W = ones(1,N) * new_W;
+L = new_W - diag(sum_rows_W);
+for i = 1 : N
+    if (sum_rows_W(i) ~= 0)
+        sum_rows_W(i) = sum_rows_W(i).^(-1/2);
+    end
+end
+D1 = diag(sum_rows_W);
+L_Norm = (D1*L*D1);
+% figure,imagesc(Lchandra);
+[U,S,V] = svd(L_Norm);
+figure
+scatter(U(:,N-1),U(:,N-2),20,cmap)
+title('LE')
+%%
+%%%%%%%%%% lecture 7 slide 68
+clearvars
+input_video = VideoReader('hotlips.mp4');
+neighbours = 25;
+i = 1;
+while hasFrame(input_video)
+    f = readFrame(input_video);
+    f_gray = rgb2gray(f);
+    input(:, i) = f_gray(:);
+    i = i + 1;
+end
+input_double = double(input);
+W = zeros(86, 86);
+sigma = 100;
+N = 86;
+for i = 1 : N
+    x = input_double(:,i);
+    for j = 1: N
+        y = input_double(:,j);
+        W(i,j) = dot(x,y)/(norm(x)*norm(y));
+    end
+end
+
+new_W = zeros(N,N);
+for i = 1:N
+    [sort_data, sort_index] = sort(W(i,:));
+    for j = N-1 : -1: N - neighbours + 1
+        max_index = sort_index(j);
+        new_W(i,max_index) = sort_data(j);
+    end
+end
+
+sum_rows_W = ones(1,N) * new_W;
+L = new_W - diag(sum_rows_W);
+for i = 1 : N
+    if (sum_rows_W(i) ~= 0)
+        sum_rows_W(i) = sum_rows_W(i).^(-1/2);
+    end
+end
+D1 = diag(sum_rows_W);
+L_Norm = (D1*L*D1);
+[U,S,V] = svd(L_Norm);
+figure
+scatter(U(:,N-1),U(:,N-2))
+title('LE')
+%%
+%%%%%%%%%%%%%%%% bonus 
+clearvars
+load('one.mat')
+[row, col] = size(one);
+neighbours = 100
+len = 28 * 28;
+input = zeros(len, col);
+for i  = 1:col
+    input(:, i) = one{i}(:);
+end
+
+N = 1135;
+W = zeros(N, N);
+sigma = 50;
+for i = 1 : N
+    x = input(:,i);
+    for j = 1: N
+        y = input(:,j);
+        W(i,j) = dot(x,y)/(norm(x)*norm(y));
+    end
+end
+
+new_W = zeros(N,N);
+for i = 1:N
+    [sort_data, sort_index] = sort(W(i,:));
+    for j = N-1 : -1: N - neighbours + 1
+        max_index = sort_index(j);
+        new_W(i,max_index) = sort_data(j);
+    end
+end
+
+sum_rows_W = ones(1,N) * new_W;
+L = new_W - diag(sum_rows_W);
+for i = 1 : N
+    if (sum_rows_W(i) ~= 0)
+        sum_rows_W(i) = sum_rows_W(i).^(-1/2);
+    end
+end
+D1 = diag(sum_rows_W);
+L_Norm = (D1*L*D1);
+[U,S,V] = svd(L_Norm);
+figure
+scatter(U(:,N-1),U(:,N-2))
+title('LE')
+
