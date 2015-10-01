@@ -1,11 +1,13 @@
 load one.mat;
 [R, C] = size(one);
-IN  = 
+
 for i = 1:C
-    
+    input(:,i) = one{i}(:);
 end
 
+X = input;
 
+N = 1135;
 % figure,imagesc(X),colormap gray;
 %%
 % finding the distance between points
@@ -24,7 +26,7 @@ end
 
 %%
 tw = zeros(N);
-neighbours = 8;
+neighbours = 100;
 for i = 1:N
     [sort_data, sort_index] = sort(W(i,:),'descend');
     for j = 2:neighbours
@@ -49,36 +51,5 @@ Lchandra = (D1*L*D1);
 % figure,imagesc(Lchandra);
 [U,S,V] = svd(Lchandra);
 cmap = jet(N);
-subplot(1,2,1)
-scatter(U(:,N-1),U(:,N-2),50,cmap),colormap gray, title(' with 8 neighbours ')
-
-
-%% k = 25
-tw = zeros(N);
-neighbours = 25;
-for i = 1:N
-    [sort_data, sort_index] = sort(W(i,:),'descend');
-    for j = 2:neighbours
-        max_index = sort_index(1,j);
-        tw(i,max_index) = sort_data(1,j);
-    end
-end
-% figure, imagesc(tw),colormap gray;
-
-
-onet = ones(N,1).';
-rs = onet*tw;
-D = diag(rs);
-L = tw - D;
-for i = 1:N
-    if (rs(1,i) ~= 0) 
-        rs(1,i) = rs(1,i).^(-0.5);
-    end
-end
-D1 = diag(rs);
-Lchandra = (D1*L*D1);
-% figure,imagesc(Lchandra);
-[U,S,V] = svd(Lchandra);
-cmap = jet(N);
-subplot(1,2,2)
-scatter(U(:,N-1),U(:,N-2),50,cmap),colormap gray, title(' with 25 neighbours ');
+% subplot(1,2,1)
+scatter(U(:,N-1),U(:,N-2)),colormap gray, title(' with 50 neighbours ')
