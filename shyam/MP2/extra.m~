@@ -1,2 +1,0 @@
-load one.mat;
-[H, V, P] = size(one);
