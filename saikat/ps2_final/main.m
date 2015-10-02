@@ -1,43 +1,47 @@
 %%
-%%%%%%%%%%%%% lecture 5 slide 25
 clearvars
-N = 1000;
-theta = 100;
-y1 = 5 * randn(300,1);
-y2 = 1 * randn(300,1);
+N = 500;
+theta = 150;
+y1 = 5 * randn(N,1);
+y2 = 1 * randn(N,1);
 rotation = [cosd(theta) -sind(theta); sind(theta) cosd(theta)];
-Y = [y1 y2] * rotation;
+Y = [y1, y2] * rotation;
 y1 = Y(:,1);
 y2 = Y(:,2);
 %%%%make zero mean
-mean_y1 = sum(y1) / N;
-mean_y2 = sum(y2) / N;
+mean_y1 = mean(y1);
+mean_y2 = mean(y2);
 y1 = y1 - mean_y1;
 y2 = y2 - mean_y2;
-figure
-scatter(y1,y2);
+figure('Name','lecture 5.25','numbertitle','off');
+scatter(y1,y2, '.');
 title('input data')
-X = [y1.'; y2.'];
-cov_X = cov(X.');
+X = [y1 y2];
+cov_X = cov(X);
 [U, S, V] = svd(cov_X);
+max_eigen_vec = U(:,1);
+max_eigen_val = S(1,1);
+min_eigen_vec = U(:,2);
+min_eigen_val = S(2,2);
 
-new_X = U.' * X;
-figure
-scatter(new_X(1,:), new_X(2,:))
-title('pca op')
+%%%%%%%%%input is 0 mean%%%%%%
+X0 = 0;
+Y0 = 0;
+figure('Name','lecture 5.25','numbertitle','off');
+subplot(1,2,1);
+plot(X(:,1), X(:,2), '.'), title('input data');
+hold on
+quiver(X0, Y0, max_eigen_vec(1)*sqrt(max_eigen_val), max_eigen_vec(2)*sqrt(max_eigen_val), 'r');
+quiver(X0, Y0, min_eigen_vec(1)*sqrt(min_eigen_val), min_eigen_vec(2)*sqrt(min_eigen_val), 'g');
 
-figure
-scatter(y1,y2);
-hold on
-plot(U(:,1))
-hold on
-plot(U(:,2))
-title('eigen vectors')
+Z = U.' * X.';
+subplot(1,2,2);
+plot(Z(1,:), Z(2,:), '.'), title('feature weights');
 %%
 %%%%%%%%%%%%% Lecture 5 Slide 37 %%%%%%%%%%%%%%%%
 clearvars
 load('faces.mat');
-h = figure('Name','input faces','numbertitle','off');
+figure('Name','input faces','numbertitle','off');
 colormap bone
 for i = 1:36
     subplot(6,6,i);
@@ -186,7 +190,7 @@ for i = 1:16
     imagesc(reshape(W_PCA(i,:),M,N))
 end
 %%%%%%%%%%%%%%%%%%%%ICA %%%%%%%%%%%%%%
-W_ICA = rand(16,16);
+W_ICA = eye(16,16);%rand(16,16);
 I = eye(16);
 alpha = 1e-16;
 count = 0;
@@ -273,7 +277,7 @@ hold on
 plot(Z_PCA(3,:))
 title('PCA component weights')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ICA
-W_ICA = rand(3,3);
+W_ICA = eye(3,3)%rand(3,3);
 I = eye(3);
 alpha = 1e-16;
 count = 0;
@@ -314,7 +318,7 @@ hold on
 plot(Z_NEW(2,:))
 hold on
 plot(Z_NEW(3,:))
-title('Component weights')
+title('ICA Component weights')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%input, dim, max_iter, error
 [w,h] = mynmf(input_double, 3, 100,1e-05);
