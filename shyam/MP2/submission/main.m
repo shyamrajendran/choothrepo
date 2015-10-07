@@ -2,7 +2,7 @@
 clearvars
 FigHandle = figure('name','lecture 5 - 25','numbertitle','off');
 set(FigHandle, 'Position', [50, 50, 1000, 500]);
-N = 1000;
+N = 200;
 x1 = 4 * randn(N,1);
 y1 = 1 * randn(N,1);
 R = [cosd(145) -sind(145); sind(145) cosd(145)];
