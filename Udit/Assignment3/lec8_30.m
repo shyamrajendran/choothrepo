@@ -11,14 +11,22 @@ output = conv(flippedy, x);
 figure
 plot(output);
 
-output = abs(output);
-figure
-plot(output);
+abs_output = abs(output);
 
 low_pass_filter = fir1(order, magnitude);
-output = conv(low_pass_filter, output);
+finaloutput = conv(low_pass_filter, abs_output);
 figure
-plot(output);
+plot(abs_output, 'b');
+hold on
+plot(finaloutput * 5,'r');
+
+num_avg = 2000;
+coef = ones(1,num_avg)/ num_avg;
+op1 = conv(coef, abs_output);
+figure
+plot(abs_output, 'b');
+hold on
+plot(op1 * 5,'r');
 
 end
 

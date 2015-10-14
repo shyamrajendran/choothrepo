@@ -1,18 +1,12 @@
-function lec9_33()
+function lec9_34_2()
 
 dataPoints = 200;
-x = 4 * randn(dataPoints/2,1);
-y = 0.5 * randn(dataPoints/2,1);
-Cov = [cosd(135) -sind(135); sind(135) cosd(135)];
+x = 3 * randn(dataPoints/2,1);
+y = 3 * randn(dataPoints/2,1);
 data = zeros(dataPoints, 2);
-data(1 : 100, :) = [x y] * Cov;
-%figure
-%plot(data(:,1), data(:,2),'ob');
+data(1 : 100, :) = [x y];
 
-
-
-data(101 : 200, :) = randn(dataPoints/2, 2) + 8;
-%data(101 : 200, :) = data(101 : 200, :) + 2;
+data(101 : 200, :) = randn(dataPoints/2, 2) + 2;
 labels = ones(200,1);
 labels(101 : 200) = labels(101 : 200) * -1;
 

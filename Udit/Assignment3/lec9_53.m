@@ -77,6 +77,12 @@ for i = 1 : size(class2,2)
     
 end
 
+%%%%%%plot the decision boundary
+f = @(x1,x2) w1(1)*x1 + w1(2)*x2 - w2(1)*x1 - w2(2)*x2 + b1 - b2;
+h2 = ezplot(f,[min(Z(1,:)) max(Z(1,:)) min(Z(2,:)) max(Z(2,:))]);
+h2.Color = 'g';
+h2.LineWidth = 1;
+
 %% Quadratic Boundary
 cov1 = cov(class1.');
 invcov1 = inv(cov1);
@@ -94,7 +100,7 @@ c1 = 0; c2 = 0;
 for i = 1 : size(class2,2)
     l1 = gquad(class1(:,i),W1,w1,b1,W2,w2,b2);
     l2 = gquad(class2(:,i),W1,w1,b1,W2,w2,b2);
-    if l2 == 1
+    if l1 == 1
         c1 = c1 + 1;
     else
         c2 = c2 + 1;
@@ -110,5 +116,18 @@ end
 
 c1
 c2
+
+figure
+plot(class1(1,:),class1(2,:),'r.');
+hold on
+plot(class2(1,:),class2(2,:),'b.');
+f = @(x1,x2) b1 + w1(1)*x1 + w1(2)*x2 + W1(1,1)*x1.^2 + ...
+    (W1(1,2)+W1(2,1))*x1.*x2 + W1(2,2)*x2.^2 - ...
+    (b2 + w2(1)*x1 + w2(2)*x2 + W2(1,1)*x1.^2 + ...
+    (W2(1,2)+W2(2,1))*x1.*x2 + W2(2,2)*x2.^2);
+h3 = ezplot(f,[min(Z(1,:)) max(Z(1,:)) min(Z(2,:)) max(Z(2,:))]);
+h3.Color = 'g';
+h3.LineWidth = 1;
+
 end
 
