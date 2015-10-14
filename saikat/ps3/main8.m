@@ -62,6 +62,7 @@ figure,
 colormap gray
 imagesc(one)
 [row, col] = size(one);
+
 one_gradient = zeros(row,col);
 for i = 2: (row - 1)
     for j = 2 : (col - 1)
@@ -81,6 +82,37 @@ figure, colormap gray
 imagesc(template_flipped)
 
 input_gradient = [zeros(20,30);zeros(31,7) one_gradient zeros(31,7);zeros(20,30)];
+figure, colormap gray,imagesc(input_gradient)
+
+convop = conv2(input_gradient, template_flipped);
+figure, colormap gray
+imagesc(convop)
+
+
+%%%%%%%% now on compliment image
+compliment_image = ones(row,col) - one;
+figure,
+colormap gray
+imagesc(compliment_image)
+
+one_comp_gradient = zeros(row,col);
+for i = 2: (row - 1)
+    for j = 2 : (col - 1)
+        dy = compliment_image(i-1, j) - compliment_image(i+1, j);
+        dx = compliment_image(i, j-1) - compliment_image(i, j+1);
+        one_comp_gradient(i,j) = sqrt(dy.^2 + dx.^2);
+    end
+end
+
+figure,
+colormap gray
+imagesc(one_comp_gradient)
+
+template_flipped = fliplr(flipud(one_comp_gradient));
+figure, colormap gray
+imagesc(template_flipped)
+
+input_gradient = [zeros(20,30);zeros(31,7) one_comp_gradient zeros(31,7);zeros(20,30)];
 figure, colormap gray,imagesc(input_gradient)
 
 convop = conv2(input_gradient, template_flipped);
