@@ -1,12 +1,9 @@
 clearvars
-close all
-for count = 12:14
+for count  = 9
     im = imread(['test', int2str(count), '.jpg']);
     figure,
     subplot(3,3,1)
-    
-    rand_angle = randi([-45 45], 1);
-    im = imrotate(im, rand_angle);
+%     im = imrotate(im, 90);
     im1 = imresize(im, [200 200]);
     imshow(im)
     [row, col, h] = size(im1);
@@ -38,32 +35,20 @@ for count = 12:14
                 segop(i,j) = 1;
             end
             %%%%% this will change based on band color/calibration
-            if count == 8
-                if R >= 38 && R <= 65 && G >=100 && G <=255 && B >=34 && B <= 60
-                    bandop(i,j) = 1;
-                end
-            end
-            if count == 9 || count == 10 || count == 11
-                if R >= 90 && R <= 230 && G >=6 && G <=40 && B >=45 && B <= 150
-                    bandop(i,j) = 1;
-                end
-            end
-            if count == 12 || count == 13 || count == 14
-                if R >= 100 && R <= 220 && G >=125 && G <=199 && B >=45 && B <= 99
-                    bandop(i,j) = 1;
-                end
+%             if R >= 38 && R <= 65 && G >=100 && G <=255 && B >=34 && B <= 60
+            if R >= 90 && R <= 115 && G >=6 && G <=30 && B >=100 && B <= 125
+                bandop(i,j) = 1;
             end
         end
     end
     subplot(3,3,2),
     colormap gray
     imagesc(segop)
-    segopm = medfilt2(segop, [ 7 7]);
+    segopm = medfilt2(segop, [10 10]);
     segopm1 = imclose(segopm, strel('rectangle',[10 10]));
 
     %%%% morpohological ops
     bandopm = medfilt2(bandop, [5 5]);
-%     bandopm = bandop;
     bandopm1 = imclose(bandopm, strel('rectangle',[5 5]));
     subplot(3,3,3),
     colormap gray
@@ -75,11 +60,11 @@ for count = 12:14
 
     %%%%%%%%%%%%%%%%rotation of image
     binaryImage = bandopm > 0;
-    binaryImage = bwareaopen(binaryImage, 25);
+    binaryImage = bwareaopen(binaryImage, 50);
 %     imshow(binaryImage)
     orientation = regionprops(binaryImage, 'Orientation');
     centroid = regionprops(binaryImage,'centroid');
-    rotated = imrotate(segopm1, -orientation(1).Orientation);
+    rotated = imrotate(segopm1, -orientation.Orientation);
     subplot(3,3,5),
     colormap gray
     imshow(rotated)
@@ -132,7 +117,7 @@ for count = 12:14
     end
     centroid = [sumx/pixelcount;sumy/pixelcount];
     scatter(centroid(1), centroid(2), 'ro');
-    e = edge(rotated, 'canny');
+    e = edge(rotated);
     subplot(3,3,7)
     colormap gray
     imshow(e)
