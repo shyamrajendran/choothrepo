@@ -72,17 +72,17 @@ for count = 1:10
             if yseg == 1 || rgbseg == 1
                 segop(i,j) = 1;
             end
-            %%%%% this will change based on band color/calibration
-            if count == 8
-                if R >= 38 && R <= 65 && G >=100 && G <=255 && B >=34 && B <= 60
-                    bandop(i,j) = 1;
-                end
-            end
-            if count == 9 || count == 10 || count == 11
-                if R >= 90 && R <= 230 && G >=6 && G <=40 && B >=45 && B <= 150
-                    bandop(i,j) = 1;
-                end
-            end
+%             %%%%% this will change based on band color/calibration
+%             if count == 8
+%                 if R >= 38 && R <= 65 && G >=100 && G <=255 && B >=34 && B <= 60
+%                     bandop(i,j) = 1;
+%                 end
+%             end
+%             if count == 9 || count == 10 || count == 11
+%                 if R >= 90 && R <= 230 && G >=6 && G <=40 && B >=45 && B <= 150
+%                     bandop(i,j) = 1;
+%                 end
+%             end
 %             if count == 12 || count == 13 || count == 14
             if count >= 1 && count <=10
                 if R >= R_LOW && R <= R_HIGH && G >=G_LOW && G <= G_HIGH && B >=B_LOW && B <= B_HIGH
