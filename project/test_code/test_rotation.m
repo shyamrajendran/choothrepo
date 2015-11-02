@@ -1,7 +1,42 @@
 clearvars
 close all
-for count = 12:14
-    im = imread(['test', int2str(count), '.jpg']);
+
+%%%%calibrate band range
+R_LOW = 9999
+R_HIGH = -1
+G_LOW = 9999
+G_HIGH = -1
+B_LOW = 9999
+B_HIGH = -1
+for count = 1:4
+    im = imread(['../testhand/testimg/saikat/CALIB_', int2str(count), '.JPG']);
+    [row, col, h] = size(im);
+    for i = 1:row
+        for j = 1:col
+            if im(i,j,1) < R_LOW
+                R_LOW = im(i,j,1);
+            end
+            if im(i,j,2) < G_LOW
+                G_LOW = im(i,j,2);
+            end
+            if im(i,j,3) < B_LOW
+                B_LOW = im(i,j,3);
+            end
+            if im(i,j,1) > R_HIGH
+                R_HIGH = im(i,j,1);
+            end
+            if im(i,j,2) > G_HIGH
+                G_HIGH = im(i,j,2);
+            end
+            if im(i,j,3) > B_HIGH
+                B_HIGH = im(i,j,3);
+            end
+        end
+    end    
+end
+
+for count = 1:10
+    im = imread(['../testhand/testimg/saikat/IMG_', int2str(count), '.JPG']);
     figure,
     subplot(3,3,1)
     
@@ -48,8 +83,9 @@ for count = 12:14
                     bandop(i,j) = 1;
                 end
             end
-            if count == 12 || count == 13 || count == 14
-                if R >= 100 && R <= 220 && G >=125 && G <=199 && B >=45 && B <= 99
+%             if count == 12 || count == 13 || count == 14
+            if count >= 1 && count <=10
+                if R >= R_LOW && R <= R_HIGH && G >=G_LOW && G <= G_HIGH && B >=B_LOW && B <= B_HIGH
                     bandop(i,j) = 1;
                 end
             end
@@ -58,8 +94,8 @@ for count = 12:14
     subplot(3,3,2),
     colormap gray
     imagesc(segop)
-    segopm = medfilt2(segop, [ 7 7]);
-    segopm1 = imclose(segopm, strel('rectangle',[10 10]));
+    segopm = medfilt2(segop, [ 5 5]);
+    segopm1 = imclose(segopm, strel('rectangle',[5 5]));
 
     %%%% morpohological ops
     bandopm = medfilt2(bandop, [5 5]);
@@ -74,8 +110,10 @@ for count = 12:14
     imagesc(segopm1),
 
     %%%%%%%%%%%%%%%%rotation of image
+    %%% needs to be collected from actual size calibration of band
+    average_band_pixel = 10*20;
     binaryImage = bandopm > 0;
-    binaryImage = bwareaopen(binaryImage, 25);
+    binaryImage = bwareaopen(binaryImage, average_band_pixel);
 %     imshow(binaryImage)
     orientation = regionprops(binaryImage, 'Orientation');
     centroid = regionprops(binaryImage,'centroid');
@@ -95,26 +133,40 @@ for count = 12:14
     end
     
     dist = smooth(dist, 15);
+%     %%%%%%%%%%%%%%simplified wrist deteciton
+%     for i = size(dist,1) - 1 :-1 :1
+%         if (dist(i,1)-dist(i+1,1))
+%     end
+%     
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %     figure, plot(-dist)
     % Find peaks
     [pks, locs] = findpeaks(-dist);
     th = 20; % A threshold on the distance among peaks
-    loc = locs(end);
-    for i = length(locs)-1 : -1 : 1
-        if(abs(locs(i) - loc) > th)
-            break;
+    if length(locs) == 0
+    else
+        if (length(locs) == 1)
+        loc = locs(1);
         else
-            loc = locs(i);
+        loc = locs(end);
+        for i = length(locs)-1 : -1 : 1
+            if(abs(locs(i) - loc) > th)
+                break;
+            else
+                loc = locs(i);
+            end
+        end
+        end
+        % Keep best
+        ycut = loc;
+
+        %%%%%%clear all values below ycut
+        for y = ycut:rows_rotated
+            rotated(y,:) = 0;
         end
     end
-
-    % Keep best
-    ycut = loc;
     
-    %%%%%%clear all values below ycut
-    for y = ycut:rows_rotated
-        rotated(y,:) = 0;
-    end
+    
     subplot(3,3,6)
     colormap gray
     imshow(rotated)
@@ -136,6 +188,7 @@ for count = 12:14
     subplot(3,3,7)
     colormap gray
     imshow(e)
+    figure, plot(dist)
 end
 
 
