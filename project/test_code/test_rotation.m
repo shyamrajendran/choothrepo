@@ -99,7 +99,7 @@ for count = 1:10
     colormap gray
     imagesc(segop)
     segopm = medfilt2(segop, [ 5 5]);
-    segopm1 = imclose(segopm, strel('rectangle',[7 7]));
+    segopm1 = imclose(segopm, strel('rectangle',[5 5]));
 
     %%%% morpohological ops
     bandopm = medfilt2(bandop, [5 5]);
@@ -192,6 +192,19 @@ for count = 1:10
     subplot(3,3,7)
     colormap gray
     imshow(e)
+    %%%get the clockwise pixels form the edge image
+    e_b = bwboundaries(e, 'noholes');
+%     for k = 1%:length(e_b)
+%         boundary = e_b{k};
+%         scatter(boundary(:,2), boundary(:,1), 'ro')
+%     end
+    %%biggest boundary should be hand
+    boundary = e_b{1};
+    subplot(3,3,8),
+    fnplt(cscvn(boundary.'),'r',2)
+    pt = interparc(64,boundary(:,2),boundary(:,1),'spline');
+    subplot(3,3,9),
+    plot(pt(:,1),pt(:,2),'b-o')
     figure, plot(dist)
     end
 end
