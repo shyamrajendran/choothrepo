@@ -9,8 +9,9 @@ G_HIGH = -1
 B_LOW = 9999
 B_HIGH = -1
 for count = 1:7
-    if exist(['../testhand/testimg/saikat_1/CALIB_', int2str(count), '.JPG'], 'file')
-        im = imread(['../testhand/testimg/saikat_1/CALIB_', int2str(count), '.JPG']);
+%     if exist(['../testhand/testimg/saikat_1/CALIB_', int2str(count), '.JPG'], 'file')
+    if exist(['/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/saikat_1/CALIB_', int2str(count), '.JPG'], 'file')
+        im = imread(['/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/saikat_1/CALIB_', int2str(count), '.JPG']);
         [row, col, h] = size(im);
         for i = 1:row
             for j = 1:col
@@ -38,8 +39,8 @@ for count = 1:7
 end
 
 for count = 1:10
-    if exist(['../testhand/testimg/saikat_1/IMG_', int2str(count), '.JPG'], 'file')
-    im = imread(['../testhand/testimg/saikat_1/IMG_', int2str(count), '.JPG']);
+    if exist(['/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/saikat_1/IMG_', int2str(count), '.JPG'], 'file')
+    im = imread(['/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/saikat_1/IMG_', int2str(count), '.JPG']);
     figure,
     subplot(3,3,1)
     
@@ -98,7 +99,7 @@ for count = 1:10
     colormap gray
     imagesc(segop)
     segopm = medfilt2(segop, [ 5 5]);
-    segopm1 = imclose(segopm, strel('rectangle',[5 5]));
+    segopm1 = imclose(segopm, strel('rectangle',[7 7]));
 
     %%%% morpohological ops
     bandopm = medfilt2(bandop, [5 5]);
@@ -125,7 +126,7 @@ for count = 1:10
     colormap gray
     imshow(rotated)
     
-    rows_rotated = size(rotated,1);
+    [rows_rotated, cols_rotated] = size(rotated);
     dist = zeros(rows_rotated,1);
     for row_count = rows_rotated:-1:1
         s = find(rotated(row_count,:), 1, 'first');
@@ -176,10 +177,10 @@ for count = 1:10
     hold on
     %     %%%%%%%%%%%%%%%%% calculate centroid of the hand area
     sumx = 0;sumy = 0;pixelcount = 0;
-    for i = 1:row
-        for j = 1:col
-            if segopm1(i,j) > 0
-                sumy =  sumy + j;
+    for i = 1:rows_rotated
+        for j = 1:cols_rotated
+            if rotated(i,j) > 0
+                sumy =  sumy + i;
                 sumx =  sumx + j;
                 pixelcount = pixelcount + 1;
             end
