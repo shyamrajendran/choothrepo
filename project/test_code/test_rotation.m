@@ -205,6 +205,10 @@ for count = 1:10
     pt = interparc(64,boundary(:,2),boundary(:,1),'spline');
     subplot(3,3,9),
     plot(pt(:,1),pt(:,2),'b-o')
+    xc = mean(pt(:,1));
+    yc = mean(pt(:,2));
+    hold on 
+    plot(xc,yc,'ro')
     figure, plot(dist)
     end
 end
