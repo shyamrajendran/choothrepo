@@ -1,9 +1,11 @@
 close all
 clearvars
 count = 10;
-global_fd = test_rotation(0, count);
+filename = '/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/testfd/';
+global_fd = test_rotation(count, filename);
 % close all
-global_fd_test = test_rotation(1, count);
+filename = '/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/testfd/test/';
+global_fd_test = test_rotation(count, filename);
 
 
 %%%%%%%%%%%check accuracy using confusion matrix

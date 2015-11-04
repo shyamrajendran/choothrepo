@@ -1,5 +1,4 @@
-function fd_op = test_rotation(testflag, totalcount)
-test=testflag;
+function fd_op = test_rotation(totalcount, filename)
 %%%complex = 0 is complex coordinate signature
 %%% else centroid distance signature
 complex = 0;
@@ -14,14 +13,9 @@ B_LOW = 9999;
 B_HIGH = -1;
 
 for count = 1:totalcount
-%     if exist(['../testhand/testimg/saikat_1/CALIB_', int2str(count), '.JPG'], 'file')
-    if test == 0
-        filename = ['/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/testfd/CALIB_', int2str(count), '.JPG'];
-    else
-        filename = ['/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/testfd/test/CALIB_', int2str(count), '.JPG'];
-    end
-    if exist(filename, 'file')
-        im = imread(filename);
+    calibfile = [filename, 'CALIB_', int2str(count), '.JPG'];
+    if exist(calibfile, 'file')
+        im = imread(calibfile);
         [row, col, h] = size(im);
         for i = 1:row
             for j = 1:col
@@ -49,13 +43,9 @@ for count = 1:totalcount
 end
 
 for count = 1:totalcount
-    if test == 0
-        filename = ['/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/testfd/IMG_', int2str(count), '.JPG'];
-    else
-        filename = ['/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/testfd/test/IMG_', int2str(count), '.JPG'];
-    end
-    if exist(filename, 'file')
-        im = imread(filename);
+    datafile = [filename, 'IMG_', int2str(count), '.JPG'];
+    if exist(datafile, 'file')
+        im = imread(datafile);
         figure,
         subplot(3,3,1)
 
@@ -232,52 +222,11 @@ for count = 1:totalcount
                 fd(i,1) = abs(xy_fd(i))/ FD0;
             end
         end
-        
-        
-        
+
         fd = circshift(fd, length(fd)/2);
         figure,plot(fd)
-        if test == 0
-            global_fd(count,:) = fd.';
-        else
-            global_fd_test(count,:) = fd.';
-        end
+        global_fd(count,:) = fd.';
     end
 end
-if test == 1
-    fd_op = global_fd_test;
-else
-    fd_op = global_fd;
-end
-% error = zeros(count,count);
-% if test==1
-%     for i = 1:count
-%         test_cur = global_fd_test(i,:);
-%         for j = 1:count
-%             curr = global_fd(j,:);
-%             sum = 0;
-%             for k = 1:length(global_fd)
-%                 sum = sum + (test_cur(k) - curr(k))^2;
-%             end
-%             error(i,j) = sqrt(sum);
-%         end
-%     end
-%     classfier_op = zeros(count,1);
-%     match = 0;
-%     for i = 1:count
-%         minval = 9999;
-%         minindex = -1;
-%         for j = 1:count
-%             if minval > error(i,j)
-%                 minval = error(i,j);
-%                 minindex = j;
-%             end
-%         end
-%         classfier_op(i,1) = minindex;
-%         if minindex == i
-%             match = match + 1;
-%         end
-%     end
-%     accuracy = match * 100 /count;
-% end
+fd_op = global_fd;
 end
