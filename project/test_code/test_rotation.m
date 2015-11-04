@@ -1,24 +1,19 @@
-close all
-
-test=1
-if test ==0
-clearvars
-end
-test = 1
+function fd_op = test_rotation(testflag, totalcount)
+test=testflag;
 %%%complex = 0 is complex coordinate signature
 %%% else centroid distance signature
-complex = 1;
-%% test =1 for testing, test=0 for training
+complex = 0;
+%%% test =1 for testing, test=0 for training
 
 %%%%calibrate band range
-R_LOW = 9999
-R_HIGH = -1
-G_LOW = 9999
-G_HIGH = -1
-B_LOW = 9999
-B_HIGH = -1
+R_LOW = 9999;
+R_HIGH = -1;
+G_LOW = 9999;
+G_HIGH = -1;
+B_LOW = 9999;
+B_HIGH = -1;
 
-for count = 1:7
+for count = 1:totalcount
 %     if exist(['../testhand/testimg/saikat_1/CALIB_', int2str(count), '.JPG'], 'file')
     if test == 0
         filename = ['/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/testfd/CALIB_', int2str(count), '.JPG'];
@@ -53,7 +48,7 @@ for count = 1:7
     end
 end
 
-for count = 1:10
+for count = 1:totalcount
     if test == 0
         filename = ['/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/testfd/IMG_', int2str(count), '.JPG'];
     else
@@ -65,7 +60,8 @@ for count = 1:10
         subplot(3,3,1)
 
         rand_angle = randi([-45 45], 1);
-        im = imrotate(im, rand_angle);
+        %%% give a random rotation to the gesture
+%         im = imrotate(im, rand_angle);
         im1 = imresize(im, [200 200]);
         imshow(im)
         [row, col, h] = size(im1);
@@ -233,7 +229,7 @@ for count = 1:10
             FD0 = abs(xy_fd(1));
             xy_fd = xy_fd(2:length(xy_fd));
             for i = 1:length(xy_fd)
-                fd(i,1) = abs(xy_fd(i))/ FD1;
+                fd(i,1) = abs(xy_fd(i))/ FD0;
             end
         end
         
@@ -248,35 +244,40 @@ for count = 1:10
         end
     end
 end
-error = zeros(count,count);
-if test==1
-    for i = 1:count
-        test_cur = global_fd_test(i,:);
-        for j = 1:count
-            curr = global_fd(j,:);
-            sum = 0;
-            for k = 1:length(global_fd)
-                sum = sum + (test_cur(k) - curr(k))^2;
-            end
-            error(i,j) = sqrt(sum);
-        end
-    end
-    classfier_op = zeros(count,1);
-    match = 0;
-    for i = 1:count
-        minval = 9999;
-        minindex = -1;
-        for j = 1:count
-            if minval > error(i,j)
-                minval = error(i,j);
-                minindex = j;
-            end
-        end
-        classfier_op(i,1) = minindex;
-        if minindex == i
-            match = match + 1;
-        end
-    end
-    accuracy = match * 100 /count;
+if test == 1
+    fd_op = global_fd_test;
+else
+    fd_op = global_fd;
 end
-
+% error = zeros(count,count);
+% if test==1
+%     for i = 1:count
+%         test_cur = global_fd_test(i,:);
+%         for j = 1:count
+%             curr = global_fd(j,:);
+%             sum = 0;
+%             for k = 1:length(global_fd)
+%                 sum = sum + (test_cur(k) - curr(k))^2;
+%             end
+%             error(i,j) = sqrt(sum);
+%         end
+%     end
+%     classfier_op = zeros(count,1);
+%     match = 0;
+%     for i = 1:count
+%         minval = 9999;
+%         minindex = -1;
+%         for j = 1:count
+%             if minval > error(i,j)
+%                 minval = error(i,j);
+%                 minindex = j;
+%             end
+%         end
+%         classfier_op(i,1) = minindex;
+%         if minindex == i
+%             match = match + 1;
+%         end
+%     end
+%     accuracy = match * 100 /count;
+% end
+end
