@@ -61,8 +61,8 @@ for count = 1:totalcount
 
         rand_angle = randi([-45 45], 1);
         %%% give a random rotation to the gesture
-%         im = imrotate(im, rand_angle);
-        im1 = imresize(im, [200 200]);
+        im = imrotate(im, rand_angle);
+        im1 = imresize(im, [200 150]);
         imshow(im)
         [row, col, h] = size(im1);
 
