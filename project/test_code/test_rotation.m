@@ -1,4 +1,4 @@
-function fd_op = test_rotation(start, totalcount, filename)
+function fd_op = test_rotation(start, totalcount, filename, display)
 %%%complex = 0 is complex coordinate signature
 %%% else centroid distance signature
 complex = 0;
@@ -12,7 +12,7 @@ G_HIGH = -1;
 B_LOW = 9999;
 B_HIGH = -1;
 
-for count = start: (start+totalcount-1)
+for count = 1:5
     calibfile = [filename, 'CALIB_', int2str(count), '.JPG'];
     if exist(calibfile, 'file')
         im = imread(calibfile);
@@ -46,14 +46,18 @@ for count = start:(start + totalcount-1)
     datafile = [filename, 'IMG_', int2str(count), '.JPG'];
     if exist(datafile, 'file')
         im = imread(datafile);
-        figure,
-        subplot(3,3,1),
+        if display == 1
+            figure,
+            subplot(3,3,1),
+        end
 
 %         rand_angle = randi([-45 45], 1);
         %%% give a random rotation to the gesture
 %         im = imrotate(im, rand_angle);
         im1 = imresize(im, [200 150]);
-        imshow(im)
+        if display == 1
+            imshow(im)
+        end
         [row, col, h] = size(im1);
 
         %%%%% for band
@@ -88,23 +92,26 @@ for count = start:(start + totalcount-1)
                 end
             end
         end
-        subplot(3,3,2),
-        colormap gray
-        imagesc(segop)
+        if display == 1
+            subplot(3,3,2),
+            colormap gray
+            imagesc(segop)
+        end
         segopm = medfilt2(segop, [ 5 5]);
         segopm1 = imclose(segopm, strel('rectangle',[5 5]));
 
         %%%% morpohological ops
         bandopm = medfilt2(bandop, [5 5]);
         bandopm1 = imclose(bandopm, strel('rectangle',[5 5]));
-        subplot(3,3,3),
-        colormap gray
-        imagesc(bandopm1),
+        if display == 1
+            subplot(3,3,3),
+            colormap gray
+            imagesc(bandopm1),
 
-        subplot(3,3,4),
-        colormap gray
-        imagesc(segopm1),
-
+            subplot(3,3,4),
+            colormap gray
+            imagesc(segopm1),
+        end
         %%%%%%%%%%%%%%%%rotation of image
         %%% needs to be collected from actual size calibration of band
         average_band_pixel = 10*20;
@@ -118,10 +125,11 @@ for count = start:(start + totalcount-1)
             angle = -orientation(1).Orientation;
         end
         rotated = imrotate(segopm1, -angle);
-        subplot(3,3,5),
-        colormap gray
-        imshow(rotated)
-
+        if display == 1
+            subplot(3,3,5),
+            colormap gray
+            imshow(rotated)
+        end
         [rows_rotated, cols_rotated] = size(rotated);
         dist = zeros(rows_rotated,1);
         for row_count = rows_rotated:-1:1
@@ -159,11 +167,12 @@ for count = start:(start + totalcount-1)
             end
         end
 
-
-        subplot(3,3,6)
-        colormap gray
-        imshow(rotated)
-        hold on
+        if display == 1
+            subplot(3,3,6)
+            colormap gray
+            imshow(rotated)
+            hold on
+        end
         %     %%%%%%%%%%%%%%%%% calculate centroid of the hand area
         sumx = 0;sumy = 0;pixelcount = 0;
         for i = 1:rows_rotated
@@ -176,11 +185,15 @@ for count = start:(start + totalcount-1)
             end
         end
         centroid = [sumx/pixelcount;sumy/pixelcount];
-        scatter(centroid(1), centroid(2), 'ro');
+        if display == 1
+            scatter(centroid(1), centroid(2), 'ro');
+        end
         e = edge(rotated, 'canny');
-        subplot(3,3,7)
-        colormap gray
-        imshow(e)
+        if display == 1
+            subplot(3,3,7)
+            colormap gray
+            imshow(e)
+        end
         %%%get the clockwise pixels form the edge image
         e_b = bwboundaries(e, 'noholes');
         %%%%find the biggest boundary
@@ -199,15 +212,19 @@ for count = start:(start + totalcount-1)
     %     end
         %%biggest boundary should be hand
         boundary = e_b{max_boundary_index};
-        subplot(3,3,8),
-        fnplt(cscvn(boundary.'),'r',2);
+        if display == 1
+            subplot(3,3,8),
+            fnplt(cscvn(boundary.'),'r',2);
+        end
         pt = interparc(128,boundary(:,2),boundary(:,1),'spline');
         xc = mean(pt(:,1));
         yc = mean(pt(:,2));
-        subplot(3,3,9),
-        plot(pt(:,1),pt(:,2),'b-o')
-        hold on
-        plot(xc,yc,'ro')
+        if display == 1
+            subplot(3,3,9),
+            plot(pt(:,1),pt(:,2),'b-o')
+            hold on
+            plot(xc,yc,'ro')
+        end
     %     figure, plot(dist)
         if complex == 1
             %%%now make the pt data zero mean for fourier descpitor calc
@@ -239,7 +256,9 @@ for count = start:(start + totalcount-1)
         end
 
         fd = circshift(fd, length(fd)/2);
-        figure,plot(fd),title(int2str(count))
+        if display == 1
+            figure,plot(fd),title(int2str(count))
+        end
         global_fd(count,:) = fd.';
     end
 end
