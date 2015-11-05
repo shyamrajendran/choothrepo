@@ -3,18 +3,16 @@ clearvars
 count = 220;
 display = 1;
 filename = '/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/sai_hand2/';
-global_fd_train1 = test_rotation(1, count, filename, 0);
-global_fd_train1 = global_fd_train1.';
-
-
+% global_fd_train1 = test_rotation(1, count, filename, 0);
+% global_fd_train1 = global_fd_train1.';
 
 labelfile = [filename, 'label.txt'];
 classop = load(labelfile);
 %%% classes 0-10
-Y_sai_hand2 = zeros(11, size(global_fd_train1,2)); 
-for i = 1:length(classop)
-    Y_sai_hand2(classop(i) + 1, i) = 1;
-end
+% Y_sai_hand2 = zeros(11, size(global_fd_train1,2)); 
+% for i = 1:length(classop)
+%     Y_sai_hand2(classop(i) + 1, i) = 1;
+% end
 
 
 filename = '/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/sai_hand2/';
