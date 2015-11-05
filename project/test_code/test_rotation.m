@@ -1,4 +1,4 @@
-function fd_op = test_rotation(totalcount, filename)
+function fd_op = test_rotation(start, totalcount, filename)
 %%%complex = 0 is complex coordinate signature
 %%% else centroid distance signature
 complex = 0;
@@ -12,7 +12,7 @@ G_HIGH = -1;
 B_LOW = 9999;
 B_HIGH = -1;
 
-for count = 1:totalcount
+for count = start: (start+totalcount-1)
     calibfile = [filename, 'CALIB_', int2str(count), '.JPG'];
     if exist(calibfile, 'file')
         im = imread(calibfile);
@@ -42,16 +42,16 @@ for count = 1:totalcount
     end
 end
 
-for count = 1:totalcount
+for count = start:(start + totalcount-1)
     datafile = [filename, 'IMG_', int2str(count), '.JPG'];
     if exist(datafile, 'file')
         im = imread(datafile);
         figure,
-        subplot(3,3,1)
+        subplot(3,3,1),
 
-        rand_angle = randi([-45 45], 1);
+%         rand_angle = randi([-45 45], 1);
         %%% give a random rotation to the gesture
-        im = imrotate(im, rand_angle);
+%         im = imrotate(im, rand_angle);
         im1 = imresize(im, [200 150]);
         imshow(im)
         [row, col, h] = size(im1);
@@ -112,7 +112,12 @@ for count = 1:totalcount
         binaryImage = bwareaopen(binaryImage, average_band_pixel);
         orientation = regionprops(binaryImage, 'Orientation');
         centroid = regionprops(binaryImage,'centroid');
-        rotated = imrotate(segopm1, -orientation(1).Orientation);
+        if isempty(orientation) 
+            angle = 0;
+        else
+            angle = -orientation(1).Orientation;
+        end
+        rotated = imrotate(segopm1, -angle);
         subplot(3,3,5),
         colormap gray
         imshow(rotated)
@@ -178,12 +183,22 @@ for count = 1:totalcount
         imshow(e)
         %%%get the clockwise pixels form the edge image
         e_b = bwboundaries(e, 'noholes');
+        %%%%find the biggest boundary
+        max_boundary = -1;
+        max_boundary_index = -1;
+        for blength = 1:length(e_b)
+            temp = e_b{blength};
+            if size(temp,1) > max_boundary
+                max_boundary = size(temp,1);
+                max_boundary_index = blength;
+            end
+        end
     %     for k = 1%:length(e_b)
     %         boundary = e_b{k};
     %         scatter(boundary(:,2), boundary(:,1), 'ro')
     %     end
         %%biggest boundary should be hand
-        boundary = e_b{1};
+        boundary = e_b{max_boundary_index};
         subplot(3,3,8),
         fnplt(cscvn(boundary.'),'r',2);
         pt = interparc(128,boundary(:,2),boundary(:,1),'spline');
@@ -224,7 +239,7 @@ for count = 1:totalcount
         end
 
         fd = circshift(fd, length(fd)/2);
-        figure,plot(fd)
+        figure,plot(fd),title(int2str(count))
         global_fd(count,:) = fd.';
     end
 end
