@@ -27,12 +27,12 @@ for i = 1 : size(test_data, 1)
         label_counts(label) = label_counts(label) + 1;
     end   
     
-    min_labels = 0;
+    max_labels = 0;
     predicted_label = 0;
     for j = 1 : length(label_counts)
-        if(label_counts(j) > min_labels)
+        if(label_counts(j) > max_labels)
             predicted_label = j;
-            min_labels = label_counts(j);
+            max_labels = label_counts(j);
         end
     end
     
