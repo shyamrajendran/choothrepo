@@ -1,7 +1,7 @@
 function fdop = generateFD(datafile, display, R_LOW, R_HIGH, G_LOW, G_HIGH, B_LOW, B_HIGH)
-    %%%complex = 0 is complex coordinate signature
+    %%%complex = 1 is complex coordinate signature
     %%% else centroid distance signature
-    complex = 1;
+    complex = 0;
     if exist(datafile, 'file') ==  0
         fdop = [];
     else 
