@@ -18,6 +18,8 @@ end
 accuracy = (match * 100 )/ size(Y,2)
 
 
+fd_sai
+
 
 %%%train on sam hand test with sai hand
 Y = myNeuralNetworkFunction_sam(fd_sai.global_samples_fd(:,:));
