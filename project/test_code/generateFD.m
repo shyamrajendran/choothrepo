@@ -1,67 +1,23 @@
-function fd_op = test_rotation(start, totalcount, filename, display)
-%%%complex = 0 is complex coordinate signature
-%%% else centroid distance signature
-complex = 0;
-%%% test =1 for testing, test=0 for training
-
-%%%%calibrate band range
-R_LOW = 9999;
-R_HIGH = -1;
-G_LOW = 9999;
-G_HIGH = -1;
-B_LOW = 9999;
-B_HIGH = -1;
-
-for count = 1:5
-    calibfile = [filename, 'CALIB_', int2str(count), '.JPG'];
-    if exist(calibfile, 'file')
-        im = imread(calibfile);
-        [row, col, h] = size(im);
-        for i = 1:row
-            for j = 1:col
-                if im(i,j,1) < R_LOW
-                    R_LOW = im(i,j,1);
-                end
-                if im(i,j,2) < G_LOW
-                    G_LOW = im(i,j,2);
-                end
-                if im(i,j,3) < B_LOW
-                    B_LOW = im(i,j,3);
-                end
-                if im(i,j,1) > R_HIGH
-                    R_HIGH = im(i,j,1);
-                end
-                if im(i,j,2) > G_HIGH
-                    G_HIGH = im(i,j,2);
-                end
-                if im(i,j,3) > B_HIGH
-                    B_HIGH = im(i,j,3);
-                end
-            end
-        end
-    end
-end
-
-for count = start:(start + totalcount-1)
-    datafile = [filename, 'IMG_', int2str(count), '.JPG'];
-    if exist(datafile, 'file')
+function fdop = generateFD(datafile, display, R_LOW, R_HIGH, G_LOW, G_HIGH, B_LOW, B_HIGH)
+    %%%complex = 0 is complex coordinate signature
+    %%% else centroid distance signature
+    complex = 1;
+    if exist(datafile, 'file') ==  0
+        fdop = [];
+    else 
         im = imread(datafile);
         if display == 1
             figure,
             subplot(3,3,1),
         end
-
-%         rand_angle = randi([-45 45], 1);
+    %         rand_angle = randi([-45 45], 1);
         %%% give a random rotation to the gesture
-%         im = imrotate(im, rand_angle);
+    %         im = imrotate(im, rand_angle);
         im1 = imresize(im, [200 150]);
         if display == 1
             imshow(im)
         end
         [row, col, h] = size(im1);
-
-        %%%%% for band
-        %%%r - 38-65, g - 100-136, b-34-60
         segop = zeros(row,col);
         bandop = zeros(row,col);
         for i = 1:row
@@ -92,8 +48,7 @@ for count = start:(start + totalcount-1)
                 end
             end
         end
-
-        if display == 1
+                if display == 1
             subplot(3,3,2),
             colormap gray
             imagesc(segop)
@@ -119,7 +74,6 @@ for count = start:(start + totalcount-1)
         binaryImage = bandopm > 0;
         binaryImage = bwareaopen(binaryImage, average_band_pixel);
         orientation = regionprops(binaryImage, 'Orientation');
-        centroid = regionprops(binaryImage,'centroid');
         if isempty(orientation) 
             angle = 0;
         else
@@ -140,7 +94,6 @@ for count = start:(start + totalcount-1)
                 dist(row_count) = e - s;
             end
         end
-
         dist = smooth(dist, 15);
         % Find peaks
         [pks, locs] = findpeaks(-dist);
@@ -148,20 +101,19 @@ for count = start:(start + totalcount-1)
         if length(locs) == 0
         else
             if (length(locs) == 1)
-            loc = locs(1);
-            else
-            loc = locs(end);
-            for i = length(locs)-1 : -1 : 1
-                if(abs(locs(i) - loc) > th)
-                    break;
+                loc = locs(1);
                 else
-                    loc = locs(i);
+                loc = locs(end);
+                for i = length(locs)-1 : -1 : 1
+                    if(abs(locs(i) - loc) > th)
+                        break;
+                    else
+                        loc = locs(i);
+                    end
                 end
-            end
             end
             % Keep best
             ycut = loc;
-
             %%%%%%clear all values below ycut
             for y = ycut:rows_rotated
                 rotated(y,:) = 0;
@@ -207,11 +159,6 @@ for count = start:(start + totalcount-1)
                 max_boundary_index = blength;
             end
         end
-    %     for k = 1%:length(e_b)
-    %         boundary = e_b{k};
-    %         scatter(boundary(:,2), boundary(:,1), 'ro')
-    %     end
-        %%biggest boundary should be hand
         boundary = e_b{max_boundary_index};
         if display == 1
             subplot(3,3,8),
@@ -226,8 +173,6 @@ for count = start:(start + totalcount-1)
             hold on
             plot(xc,yc,'ro')
         end
-        %%
-    %     figure, plot(dist)
         if complex == 1
             %%%now make the pt data zero mean for fourier descpitor calc
             pt(:,1) = pt(:,1) - xc;
@@ -258,11 +203,9 @@ for count = start:(start + totalcount-1)
         end
 
         fd = circshift(fd, length(fd)/2);
-        if display == 1
-            figure,plot(fd),title(int2str(count))
-        end
-        global_fd(count,:) = fd.';
+%         if display == 1
+%             figure,plot(fd)
+%         end
+        fdop = fd;
     end
-end
-fd_op = global_fd;
 end
