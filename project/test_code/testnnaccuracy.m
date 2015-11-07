@@ -43,3 +43,20 @@ for i = 1: size(Y,2)
     end
 end
 accuracy = (match * 100 )/ size(Y,2)
+
+
+fd_udit = load('fd_udit_hand.mat');
+Y_udit_target = load('Y_udit_hand.mat');
+Y_sai_sam_udit = [Y_sai_target.Y Y_sam_target.Y Y_udit_target.Y];
+fd_sai_sam_udit = [fd_sai.global_samples_fd fd_sam.global_samples_fd fd_udit.global_samples_fd];
+
+Y = myNeuralNetworkFunction_sai_sam_udit(fd_sai.global_samples_fd(:,:));
+match = 0;
+for i = 1: size(Y,2)
+    [val,ind] = max(Y(:,i));
+    if Y_sai_target.Y(ind,i) == 1
+        match = match + 1;
+    end
+end
+accuracy = (match * 100 )/ size(Y,2)
+
