@@ -60,3 +60,15 @@ for i = 1: size(Y,2)
 end
 accuracy = (match * 100 )/ size(Y,2)
 
+
+fd_sai_col = load('fd_sai_colored_bg.mat');
+Y_sai_col_target = load('Y_sai_colored_bg.mat');
+Y = myNeuralNetworkFunction_sai_sam_udit(fd_sai_col.global_samples_fd(:,:));
+match = 0;
+for i = 1: size(Y,2)
+    [val,ind] = max(Y(:,i));
+    if Y_sai_col_target.Y(ind,i) == 1
+        match = match + 1;
+    end
+end
+accuracy = (match * 100 )/ size(Y,2)
