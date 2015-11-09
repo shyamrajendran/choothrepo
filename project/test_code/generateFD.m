@@ -1,4 +1,7 @@
 function fdop = generateFD(im, display, R_LOW, R_HIGH, G_LOW, G_HIGH, B_LOW, B_HIGH)
+    %%%im - row * col image input
+    %%%R/G/B_LOW/HIGH - low/high calibrated values of band
+
     %%%complex = 1 is complex coordinate signature
     %%% else centroid distance signature
     complex = 0;

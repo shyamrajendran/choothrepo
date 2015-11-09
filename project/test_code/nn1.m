@@ -1,5 +1,5 @@
 clearvars
-folder = '/Users/saikat/Documents/UIUC/fall2015/MLSP/latest_repo/choothrepo/project/testhand/testimg/sai_hand2/';
+folder = '/Users/saikat/Documents/UIUC/fall2015/MLSP/latest_repo/choothrepo/project/testhand/testimg/sai_colored_bg/';
 [rmin, rmax, gmin,gmax, bmin, bmax] = calibrate(folder, 5);
 labels = [];
 global_samples_count = 0;
@@ -25,5 +25,5 @@ Y = zeros(11, length(labels));
 for i = 1:length(labels)
     Y(labels(i) + 1, i) = 1;
 end
-% save('fd_sai_hand.mat', 'global_samples_fd');
-% save('Y_sai_hand.mat', 'Y');
+save('fd_sai_colored_bg.mat', 'global_samples_fd');
+save('Y_sai_colored_bg.mat', 'Y');
