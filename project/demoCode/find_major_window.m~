@@ -1,0 +1,9 @@
+function [majority] = find_major_window(alist, window_size)
+group = zeros(1,window_size);
+
+
+for i = 1:length(alist)
+    endi = min(i+window_size,length(alist))
+    group(:,i) = mode(alist(1,
+end
+end
