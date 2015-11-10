@@ -12,7 +12,7 @@ prevFrame = frame;
 disp('Begin diff frame finding');
 load('diffLog.mat');
 
-%%
+
 % while hasFrame(v)
 %     len
 %     frame = readFrame(v);
@@ -21,18 +21,17 @@ load('diffLog.mat');
 %     rms = sqrt(mean(diff(:).^2));
 %     diffLog(1,len) = rms;
 %     prevFrame = currFrame; 
-%     if ( len == 50 ) 
-%         break
-%     end
+% %     if ( len == 50 ) 
+% %         break
+% %     end
 %     len  = len + 1;
 % end
 
     
 % save('diffLog.mat','diffLog');
-len = 50;
+
 
 %%
-len = 50;
 disp('Begin peak finding');
 vecdiffLog = diffLog(:);
 sm = smooth(vecdiffLog);

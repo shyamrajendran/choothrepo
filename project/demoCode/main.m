@@ -2,18 +2,22 @@ clear
 
 %% get digit frames +5 images from peek
 
-video_path = '/Users/sam/choothrepo/project/movies/sam.mov';
+video_path = '/Users/sam/Box Sync/MLSP/project/movies/sam.mov';
 calib_path = '/Users/sam/choothrepo/project/demoCode/calib_images/';
 out_path = '/tmp/test_images';
 frame_set_count = 3;
 crop_data = load('crop_values.mat');
-[frame_set, frame_index, frame_timestamp ]  = grab_frames(video_path, crop_data.crop_values, frame_set_count, out_path);
 
+% [frame_set, frame_index, frame_timestamp ]  = grab_frames(video_path, crop_data.crop_values, frame_set_count, out_path);
+% save('frame_data.mat','frame_set','frame_index','frame_timestamp');
+load('frame_data.mat');
 %% generate Fourier Descriptor matrix 
 
-total = 5;
-calibrated_data = calibrate(calib_path, total)
-global_samples_fd = gen_fd_dir(out_path,calibrated_data);
+% total = 5;
+% calibrated_data = calibrate(calib_path, total)
+% global_samples_fd = gen_fd_dir(out_path,calibrated_data);
+
+load('fd_data.mat');
 
 %% prediction using NN
 Y = myNeuralNetworkFunction_sai_sam(global_samples_fd);
@@ -23,9 +27,11 @@ for i = 1: size(Y,2)
     predicted_numbers(1,i) = ind;
 end
 %%
-maj_predicted = find_major_window(predicted_numbers, frame_set_count);
-time_stamp_start = grab_periodic(frame_timestamp, frame_set_count,0);
-time_stamp_end = grab_periodic(frame_timestamp, frame_set_count,1);
+window_size = frame_set_count;
+% window_size = 1;
+maj_predicted = find_major_window(predicted_numbers, window_size);
+time_stamp_start = grab_periodic(frame_timestamp, window_size,0);
+time_stamp_end = grab_periodic(frame_timestamp, window_size,1);
 
 frame_values = cell(1,3);
 frame_values{1} = maj_predicted;
@@ -46,10 +52,10 @@ end
 [out_srt_path, name, ext] = fileparts(video_path);
 srt_file_name = strcat(out_srt_path,'/',name,'.srt');
 fid=fopen(srt_file_name,'w');
-commandStr = ['python gen_srt.py srt_file_name maj beg end']
+commandStr = ['python gen_srt.py "' srt_file_name '" maj beg end']
 
 [status, commandOut] = system(commandStr);
 if status==0
-     fprintf('srt file is at %s\n',srt_file_name);
+     fprintf('srt file is at %s\n *MLSP BRA*',srt_file_name);
  end
 
