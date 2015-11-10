@@ -27,13 +27,27 @@ maj_predicted = find_major_window(predicted_numbers, frame_set_count);
 time_stamp_start = grab_periodic(frame_timestamp, frame_set_count,0);
 time_stamp_end = grab_periodic(frame_timestamp, frame_set_count,1);
 
+frame_values = cell(1,3);
+frame_values{1} = maj_predicted;
+frame_values{2} = time_stamp_start;
+frame_values{3} = time_stamp_end;
+data = ['maj';'beg';'end'];
+file_names = cellstr(data);
+
+
+%% write each array into file 
+for i = 1:3
+    fid = fopen(file_names{i},'wt');  % Note the 'wt' for writing in text mode
+    fprintf(fid,'%d\n',frame_values{i});  % The format string is applied to each element of a
+    fclose(fid);
+end
+
 %% create SRT file with timestamps and predicted numbers with same name as video file
 [out_srt_path, name, ext] = fileparts(video_path);
 srt_file_name = strcat(out_srt_path,'/',name,'.srt');
 fid=fopen(srt_file_name,'w');
+commandStr = ['python gen_srt.py srt_file_name maj beg end']
 
-commandStr = sprintf('%s,'python',' ','gen_srt.py',' ',maj_predicted,' ',time_stamp_start,' ',time_stamp_end);
-%%
 [status, commandOut] = system(commandStr);
 if status==0
      fprintf('srt file is at %s\n',srt_file_name);

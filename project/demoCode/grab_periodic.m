@@ -4,11 +4,11 @@ ind = 1;
 len = length(alist);
 while (i < len) 
     if (index == 0) 
-        sub_list(1,ind) = alist(i);
+        sub_list(1,ind) = round(alist(i),0);
         i = i + window_size;
     else
         i = i + window_size;
-        sub_list(1,ind) = alist(min(i,len));
+        sub_list(1,ind) = round(alist(min(i,len)),0);
         
     end    
     ind = ind + 1;

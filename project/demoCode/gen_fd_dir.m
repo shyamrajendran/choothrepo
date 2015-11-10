@@ -14,7 +14,7 @@ fd_op = zeros(64, numFiles);
 
 for k = 1:numFiles
     im = mydata{k};
-    fd = generateFD(im, 1, calibrated_data.R_LOW, calibrated_data.R_HIGH, calibrated_data.G_LOW, calibrated_data.G_HIGH, calibrated_data.B_LOW, calibrated_data.B_HIGH);
+    fd = generateFD(im, 0, calibrated_data.R_LOW, calibrated_data.R_HIGH, calibrated_data.G_LOW, calibrated_data.G_HIGH, calibrated_data.B_LOW, calibrated_data.B_HIGH);
     fd_op(:,k) = fd;
 end
 end
