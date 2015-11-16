@@ -1,18 +1,23 @@
 function [frame_set, frame_index, frame_timestamp]  = grab_frames(video_path, crop_values, frame_set_count, out_path)
+
+
 [status,message,messageid] = mkdir(out_path);
 
+
+
 v = VideoReader(video_path);
-actor_name = 'test';
+actor_name = 'sai';
 frame_rate = v.FrameRate;
 
 % init length frame
-len = 1;
+len = 0;
 frame = readFrame(v);
 prevFrame = frame;
 disp('Begin diff frame finding');
-load('diffLog.mat');
 
-
+%%
+% 
+% % using diff
 % while hasFrame(v)
 %     len
 %     frame = readFrame(v);
@@ -27,10 +32,27 @@ load('diffLog.mat');
 %     len  = len + 1;
 % end
 
+% using xor
+% while hasFrame(v)
+%     len
+%     frame = readFrame(v);
+%     currFrame = frame;
+% %     diff = abs(currFrame - prevFrame);
+%     diff = xor(currFrame,prevFrame);
+%     rms = sqrt(mean(diff(:).^2));
+%     diffLog(1,len) = rms;
+%     prevFrame = currFrame; 
+%     if ( len == 50 ) 
+%         break
+%     end
+%     len  = len + 1;
+% end
+
     
 % save('diffLog.mat','diffLog');
-
-
+%%
+load('diffLog.mat');
+len = 483;
 %%
 disp('Begin peak finding');
 vecdiffLog = diffLog(:);
@@ -64,4 +86,5 @@ for i = indexes
         j = j + 1;
     end 
 end
+disp('saved images into /tmp/test_images');
 end
