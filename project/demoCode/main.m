@@ -1,26 +1,32 @@
 clear
-
-%% get digit frames +5 images from peek
-
-video_path = '/Users/sam/Box Sync/MLSP/project/movies/new_sai_training.mov';
-calib_path = '/Users/sam/choothrepo/project/demoCode/calib_images/';
+%% toggle this 0 / 1 to run on saved mat files instead
+rerun = 1;
+% get digit frames images from peek
+video_path = '/Users/sam/Box Sync/MLSP/project/movies/new_sai_test_phone_number.mov';
+calib_path = 'project/testhand/testimg/new_training_sai/';
 out_path = '/tmp/test_images';
-frame_set_count = 3;
+frame_set_count = 30;
 crop_data = load('crop_values.mat');
 
-[frame_set, frame_index, frame_timestamp ]  = grab_frames(video_path, crop_data.crop_values, frame_set_count, out_path);
-save('frame_data.mat','frame_set','frame_index','frame_timestamp');
-% load('frame_data.mat');
+if (rerun ~= 1) 
+    [frame_set, frame_index, frame_timestamp ]  = grab_frames(video_path, crop_data.crop_values, frame_set_count, out_path, rerun);
+    save('frame_data.mat','frame_set','frame_index','frame_timestamp');
+else
+    load('frame_data.mat');
+end
 %% generate Fourier Descriptor matrix 
 
 total = 5;
 calibrated_data = calibrate(calib_path, total)
-global_samples_fd = gen_fd_dir(out_path,calibrated_data);
-save('fd_data.mat','global_samples_fd');
-% load('fd_data.mat');
+if ( rerun ~= 1) 
+    global_samples_fd = gen_fd_dir(out_path,calibrated_data);
+    save('fd_data.mat','global_samples_fd');
+else
+    load('fd_data.mat');
+end
 
 %% prediction using NN
-Y = myNeuralNetworkFunction_sai_sam(global_samples_fd);
+Y = myNeuralNetworkFunction_allcolors2(global_samples_fd);
 predicted_numbers = zeros(1,size(Y,2));
 for i = 1: size(Y,2)
     [val,ind] = max(Y(:,i)); 

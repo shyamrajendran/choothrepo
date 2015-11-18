@@ -11,10 +11,15 @@ for k = 1:numFiles
 end
 
 fd_op = zeros(64, numFiles);
-
+count = 1;
 for k = 1:numFiles
     im = mydata{k};
-    fd = generateFD(im, 0, calibrated_data.R_LOW, calibrated_data.R_HIGH, calibrated_data.G_LOW, calibrated_data.G_HIGH, calibrated_data.B_LOW, calibrated_data.B_HIGH);
+    if (mod(count,10) == 0 ) 
+        fd = generateFD(im, 1, calibrated_data.R_LOW, calibrated_data.R_HIGH, calibrated_data.G_LOW, calibrated_data.G_HIGH, calibrated_data.B_LOW, calibrated_data.B_HIGH);
+    else
+        fd = generateFD(im, 0, calibrated_data.R_LOW, calibrated_data.R_HIGH, calibrated_data.G_LOW, calibrated_data.G_HIGH, calibrated_data.B_LOW, calibrated_data.B_HIGH);
+    end
+    count = count + 1;
     fd_op(:,k) = fd;
 end
 end
