@@ -1,0 +1,3 @@
+-latest colored video sai hand, fd_sai_colored_bg_2.mat and y_sai_colored_bg_2.mat
+-for latest colored video, use myNeuralNetworkFunction_sai_allcolors3.m and/or myNeuralNetworkFunction_sai_color_2.m (which ever gives better result)
+-myNeuralNetworkFunction_sai_color_2.m is trained on only [fd/Y]_sai_colored_bg_2.mat
