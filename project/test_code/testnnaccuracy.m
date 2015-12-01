@@ -254,9 +254,10 @@ fd_sai_cl = load('fd_sai_colored_bg.mat');
 fd_new = load('fd_sai_new.mat');
 fd_sai_new2 = load('fd_sai_new_2.mat');
 fd_sai_new3 = load('fd_sai_colored_bg_2.mat');
-fd_sai_all_colors3 = [fd_sai.global_samples_fd ...
+fd_sai_new33 = load('fd_sai_colored_bg_3.mat');
+fd_sai_all_colors5 = [fd_sai.global_samples_fd ...
     fd_sai_cl.global_samples_fd fd_new.global_samples_fd ...
-    fd_sai_new2.global_samples_fd fd_sai_new3.global_samples_fd];
+    fd_sai_new2.global_samples_fd fd_sai_new3.global_samples_fd fd_sai_new33.global_samples_fd];
 
 
 Y_sai_target = load('Y_sai_hand.mat');
@@ -264,5 +265,6 @@ Y_sai_col_target = load('Y_sai_colored_bg.mat');
 y_new = load('Y_sai_new.mat');
 Y_sai_new2 = load('Y_sai_new_2.mat');
 Y_sai_new3 = load('Y_sai_colored_bg_2.mat');
-Y_sai_all_colors3 = [Y_sai_target.Y ...
-    Y_sai_col_target.Y y_new.Y Y_sai_new2.Y Y_sai_new3.Y];
+Y_sai_new33 = load('Y_sai_colored_bg_3.mat');
+Y_sai_all_colors5 = [Y_sai_target.Y ...
+    Y_sai_col_target.Y y_new.Y Y_sai_new2.Y Y_sai_new3.Y Y_sai_new33.Y];
