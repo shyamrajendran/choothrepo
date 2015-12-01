@@ -69,14 +69,18 @@ v = VideoReader(video_path);
 
 
 %% saving images
+img_cnt = 0;
 for i = indexes
     begin_frame = i;
     end_frame = i+frame_set_count;
     while (begin_frame <= end_frame && begin_frame < len )
         findex = begin_frame;
         frame = read(v, findex);
-
+        img_cnt = img_cnt + 1;
         image = frame(crop_values.row_begin:crop_values.row_end,crop_values.col_begin:crop_values.col_end,1:3);
+        if (mod(img_cnt,30) == 0 )
+            imagesc(image);
+        end
         frame_set(:,j) = image(:);
         frame_index(:,j) = findex;
         frame_timestamp(:,j) = findex/frame_rate;
@@ -89,5 +93,7 @@ for i = indexes
         j
     end 
 end
+frame_dimension = size(image);
+save('frame_dimension.mat', 'frame_dimension');
 disp('saved images into /tmp/test_images');
 end

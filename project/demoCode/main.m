@@ -1,19 +1,21 @@
+
 clear
 %% toggle this 0 / 1 to run on saved mat files instead
+
 rerun = 1;
 % get digit frames images from peek
-video_path = '/Users/sam/Box Sync/MLSP/project/movies/new_sai_test_phone_number.mov';
+video_path = '/Users/sam/Box Sync/MLSP/project/movies/new_train/train_mono.mov';
 calib_path = 'project/testhand/testimg/new_training_sai/';
 out_path = '/tmp/test_images';
 frame_set_count = 30;
 crop_data = load('crop_values.mat');
 
-if (rerun ~= 1) 
+% if (rerun ~= 1) 
     [frame_set, frame_index, frame_timestamp ]  = grab_frames(video_path, crop_data.crop_values, frame_set_count, out_path, rerun);
     save('frame_data.mat','frame_set','frame_index','frame_timestamp');
-else
-    load('frame_data.mat');
-end
+% else
+%     load('frame_data.mat');
+% end
 %% generate Fourier Descriptor matrix 
 
 total = 5;
@@ -24,6 +26,20 @@ if ( rerun ~= 1)
 else
     load('fd_data.mat');
 end
+
+
+%% test accuracy 
+filename = '/Users/saikat/Documents/UIUC/fall2015/MLSP/choothrepo/project/testhand/testimg/sai_hand2/';
+fd = load('sai_hand2_fd.mat');
+Y = myNeuralNetworkFunction(fd.global_fd_train1);
+match = 0;
+for i = 1: size(Y,2)
+    [val,ind] = max(Y(:,i));
+    if ind == classop(i) + 1
+        match = match + 1;
+    end
+end
+accuracy = (match * 100 )/ size(Y,2);
 
 %% prediction using NN
 Y = myNeuralNetworkFunction_allcolors2(global_samples_fd);
