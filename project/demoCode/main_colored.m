@@ -54,9 +54,17 @@ Y = myNeuralNetworkFunction_sai_color_2(global_samples_fd(:,:));
 predicted_numbers = zeros(1,size(Y,2));
 for i = 1: size(Y,2)
     [val,ind] = max(Y(:,i)); 
-    predicted_numbers(1,i) = ind;
+    predicted_numbers(1,i) = ind-1; %check the index offset here [ sai ] 
 end
+
+%% check prediction
+dim = load('frame_dimension.mat');
+checkFramePrediction(frame_set, predicted_numbers, dim);
+
 %%
+
+
+
 window_size = frame_set_count;
 % window_size = 1;
 maj_predicted = find_major_window(predicted_numbers, window_size);
