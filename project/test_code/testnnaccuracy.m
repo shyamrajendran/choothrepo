@@ -268,3 +268,25 @@ Y_sai_new3 = load('Y_sai_colored_bg_2.mat');
 Y_sai_new33 = load('Y_sai_colored_bg_3.mat');
 Y_sai_all_colors5 = [Y_sai_target.Y ...
     Y_sai_col_target.Y y_new.Y Y_sai_new2.Y Y_sai_new3.Y Y_sai_new33.Y];
+match = 0;
+Y = myNeuralNetworkFunction_sai_allcolors5(fd_sai_new33.global_samples_fd(:,:));
+for i = 1: size(Y,2)
+    [val,ind] = max(Y(:,i));
+    if Y_sai_new33.Y(ind,i) == 1
+        match = match + 1;
+    end
+end
+accuracy = (match * 100 )/ size(Y,2)
+
+clearvars
+fd_sai_new33 = load('fd_sai_colored_bg_3.mat');
+Y_sai_new33_target = load('Y_sai_colored_bg_3.mat');
+Y = myNeuralNetworkFunction_sai_allcolors5(fd_sai_new33.global_samples_fd(:,:));
+match = 0;
+for i = 1: size(Y,2)
+    [val,ind] = max(Y(:,i));
+    if Y_sai_new33_target.Y(ind,i) == 1
+        match = match + 1;
+    end
+end
+accuracy = (match * 100 )/ size(Y,2)
