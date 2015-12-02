@@ -1,5 +1,5 @@
 clearvars
-folder = '/Users/saikat/Documents/UIUC/fall2015/MLSP/latest_repo/choothrepo/project/testhand/testimg/sai_colored_bg/';
+folder = '/Users/saikat/Documents/UIUC/fall2015/MLSP/latest_repo/choothrepo/project/testhand/testimg/color_train2_labelled_test_train/';
 [rmin, rmax, gmin,gmax, bmin, bmax] = calibrate(folder, 5);
 labels = [];
 global_samples_count = 0;
@@ -12,7 +12,8 @@ for digit = 0:10
     for count = 1:numfiles
         filename = fnames(count).name;
         datafile = [basefolder, filename];
-        fd = generateFDfromfile(datafile, 0, rmin, rmax, gmin, gmax, bmin, bmax);
+%         fd = generateFDfromfile(datafile, 0, rmin, rmax, gmin, gmax, bmin, bmax);
+        fd = generateFDfromfilewithoutwristcrop(datafile, 0, rmin, rmax, gmin, gmax, bmin, bmax);
         if isempty(fd) == 0
             global_samples_count = global_samples_count + 1;
             labels(global_samples_count) = digit;
@@ -25,5 +26,5 @@ Y = zeros(11, length(labels));
 for i = 1:length(labels)
     Y(labels(i) + 1, i) = 1;
 end
-save('fd_sai_colored_bg.mat', 'global_samples_fd');
-save('Y_sai_colored_bg.mat', 'Y');
+save('fd_sai_colored_bg_3.mat', 'global_samples_fd');
+save('Y_sai_colored_bg_3.mat', 'Y');
