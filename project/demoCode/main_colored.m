@@ -50,7 +50,7 @@ end
 % accuracy = (match * 100 )/ size(Y,2);
 
 %% prediction using NN
-Y = myNeuralNetworkFunction_sai_color_2(global_samples_fd(:,:));
+Y = myNeuralNetworkFunction_sai_allcolors5(global_samples_fd(:,:));
 predicted_numbers = zeros(1,size(Y,2));
 for i = 1: size(Y,2)
     [val,ind] = max(Y(:,i)); 
