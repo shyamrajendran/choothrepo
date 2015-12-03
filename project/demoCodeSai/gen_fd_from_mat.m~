@@ -1,0 +1,3 @@
+function fd_op = gen_fd_from_mat(frame_set, calibrated_data)
+[r,numf] = size()
+end
