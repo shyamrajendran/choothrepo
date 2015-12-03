@@ -2,7 +2,7 @@
 clear;clc;
 %% toggle this 0 / 1 to run on saved mat files instead
 
-rerun = 1;
+rerun = 0;
 % get digit frames images from peek
 video_path = '/Users/sam/Box Sync/MLSP/project/movies/new_train/test_color.mov';
 calib_path = 'project/testhand/testimg/new_training_sai/';
