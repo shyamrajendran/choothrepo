@@ -3,7 +3,7 @@
 -myNeuralNetworkFunction_sai_color_2.m is trained on only [fd/Y]_sai_colored_bg_2.mat
 -myNeuralNetworkFunction_sai_allcolors4.m latest sai test and train video samples(887 samples)
 -myNeuralNetworkFunction_sai_allcolors5.m on overall sai hand samples (2599 samples)
-
+-myNeuralNetworkFunction_sai_allcolors6.m on all sai hand samples excluding test video frames
 generateFD functions:
 -for the latest colored sai hand, there is no wrist, so to avoid wrist cropping logic, use generateFDfromfilewithoutwristcrop.m/generateFD2.m
 -for wrist cropping enabled, used generateFDfromfile.m/generateFD.m
