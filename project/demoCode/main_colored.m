@@ -50,7 +50,15 @@ end
 % accuracy = (match * 100 )/ size(Y,2);
 
 %% prediction using NN
-Y = myNeuralNetworkFunction_sai_allcolors5(global_samples_fd(:,:));
+% Y = myNeuralNetworkFunction_sai_color_2(global_samples_fd(:,:));
+Y = myNeuralNetworkFunction_sai_allcolors4(global_samples_fd(:,:));
+% Y = myNeuralNetworkFunction_sai_allcolors5(global_samples_fd(:,:));
+% Y = myNeuralNetworkFunction_sai_allcolors6(global_samples_fd(:,:));
+% Y = myNeuralNetworkFunction_sai_allcolors7(global_samples_fd(:,:));
+
+
+
+
 predicted_numbers = zeros(1,size(Y,2));
 for i = 1: size(Y,2)
     [val,ind] = max(Y(:,i)); 
@@ -65,7 +73,7 @@ checkFramePrediction(frame_set, predicted_numbers, dim);
 
 
 
-window_size = 8;
+window_size = 10;
 % window_size = 1;
 maj_predicted = find_major_window(predicted_numbers, window_size);
 time_stamp_start = grab_periodic(frame_timestamp, window_size,0);
