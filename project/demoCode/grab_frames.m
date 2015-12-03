@@ -84,7 +84,7 @@ for i = indexes
         frame_set(:,j) = image(:);
         frame_index(:,j) = findex;
         frame_timestamp(:,j) = findex/frame_rate;
-        filename=sprintf('IMG_%d',j);
+        filename=sprintf('%d',1000 + j);
         name = strcat(out_path,'/',actor_name,'_',filename,'.JPG');
         imwrite(image, name);
 
