@@ -65,7 +65,7 @@ checkFramePrediction(frame_set, predicted_numbers, dim);
 
 
 
-window_size = frame_set_count;
+window_size = 8;
 % window_size = 1;
 maj_predicted = find_major_window(predicted_numbers, window_size);
 time_stamp_start = grab_periodic(frame_timestamp, window_size,0);
@@ -79,14 +79,20 @@ data = ['maj';'beg';'end'];
 file_names = cellstr(data);
 
 
-%% write each array into file 
-for i = 1:3
+%% write each array into file
+fid = fopen(file_names{1},'wt');  % Note the 'wt' for writing in text mode
+fprintf(fid,'%d\n',frame_values{1});  % The format string is applied to each element of a
+fclose(fid);
+    
+for i = 2:3 
     fid = fopen(file_names{i},'wt');  % Note the 'wt' for writing in text mode
-    fprintf(fid,'%d\n',frame_values{i});  % The format string is applied to each element of a
+    for j = 1 : length(frame_values{i})
+        fprintf(fid,'%s\n',frame_values{i}{j});  % The format string is applied to each element of a
+    end
     fclose(fid);
 end
-
-%% create SRT file with timestamps and predicted numbers with same name as video file
+%%
+%%% create SRT file with timestamps and predicted numbers with same name as video file
 [out_srt_path, name, ext] = fileparts(video_path);
 srt_file_name = strcat(out_srt_path,'/',name,'.srt');
 fid=fopen(srt_file_name,'w');
@@ -95,5 +101,7 @@ commandStr = ['python gen_srt.py "' srt_file_name '" maj beg end']
 [status, commandOut] = system(commandStr);
 if status==0
      fprintf('srt file is at %s\n *MLSP BRA*',srt_file_name);
- end
+else
+    disp('ERROR');
+end
 
