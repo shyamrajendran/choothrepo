@@ -5,6 +5,7 @@
 -myNeuralNetworkFunction_sai_allcolors5.m on overall sai hand samples (2599 samples)
 -myNeuralNetworkFunction_sai_allcolors6.m on all sai hand samples excluding test video frames
 -myNeuralNetworkFunction_sai_allcolors7.m on all sai hand samples, mono samples included
+-nn_allsamples.m nn trained on all 4400 samples(all hands all actors)
 generateFD functions:
 -for the latest colored sai hand, there is no wrist, so to avoid wrist cropping logic, use generateFDfromfilewithoutwristcrop.m/generateFD2.m
 -for wrist cropping enabled, used generateFDfromfile.m/generateFD.m
